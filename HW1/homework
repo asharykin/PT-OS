@@ -1,0 +1,56 @@
+#!/bin/bash
+
+if ! command -v tmux &> /dev/null; then
+    apt-get update -y &> /dev/null && apt-get install -y tmux &> /dev/null
+fi
+
+tmux new-session -s homework -d &> /dev/null
+
+ACTION=$1
+shift
+
+if [ $ACTION = "start" ]; then
+    while [ $# -gt 0 ]; do
+        case $1 in
+            --name)
+                SERVER_NAME=$2
+                shift 2
+                ;;
+            --port)
+                SERVER_PORT=$2
+                shift 2
+                ;;
+         esac
+    done
+    mkdir -p $SERVER_NAME
+    cp server.py $SERVER_NAME/
+    tmux new-window -t homework -n $SERVER_NAME
+    tmux send-keys -t homework:$SERVER_NAME "cd $SERVER_NAME; python server.py --port $SERVER_PORT &> out.txt" C-m
+
+elif [ $ACTION = "stop" ]; then
+    mkdir -p .backup
+    SERVER_NAME=$2
+    STOP_TIMESTAMP=$(date +%s)
+    cp $SERVER_NAME/out.txt .backup/out_"$SERVER_NAME"_$STOP_TIMESTAMP.txt
+    # закрытие окна также должно остановить и процесс копии веб-сервера, если я правильно понял
+    tmux kill-window -t homework:$SERVER_NAME
+    rm -rf $SERVER_NAME
+
+elif [ $ACTION = "stop_all" ]; then
+    mkdir -p .backup
+    SERVER_DIRS=$(find . -mindepth 1 -maxdepth 1 -type d ! -name .backup ! -name .git -printf "%f\n")
+    for SERVER_NAME in $SERVER_DIRS; do
+        STOP_TIMESTAMP=$(date +%s)
+        cp $SERVER_NAME/out.txt .backup/out_"$SERVER_NAME"_$STOP_TIMESTAMP.txt
+	tmux kill-window -t homework:$SERVER_NAME
+    done
+    tmux kill-session -t homework
+    rm -rf $SERVER_DIRS
+
+elif [ $ACTION = "collect_all" ]; then
+    SERVER_DIRS=$(find . -mindepth 1 -maxdepth 1 -type d ! -name .backup ! -name .git -printf "%f\n" | sort)
+    for SERVER_NAME in $SERVER_DIRS; do
+        echo "=== server: $SERVER_NAME ==="
+        cat $SERVER_NAME/out.txt
+    done
+fi
