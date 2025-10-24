@@ -42,7 +42,7 @@ elif [ $ACTION = "stop_all" ]; then
     for SERVER_NAME in $SERVER_DIRS; do
         STOP_TIMESTAMP=$(date +%s)
         cp $SERVER_NAME/out.txt .backup/out_"$SERVER_NAME"_$STOP_TIMESTAMP.txt
-	tmux kill-window -t homework:$SERVER_NAME
+	      tmux kill-window -t homework:$SERVER_NAME
     done
     tmux kill-session -t homework
     rm -rf $SERVER_DIRS
