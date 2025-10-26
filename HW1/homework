@@ -25,7 +25,7 @@ if [ $ACTION = "start" ]; then
     mkdir -p $SERVER_NAME
     cp server.py $SERVER_NAME/
     tmux new-window -t homework -n $SERVER_NAME
-    tmux send-keys -t homework:$SERVER_NAME "cd $SERVER_NAME; python server.py --port $SERVER_PORT &> out.txt" C-m
+    tmux send-keys -t homework:$SERVER_NAME "cd $SERVER_NAME && python server.py --port $SERVER_PORT &> out.txt" C-m
 
 elif [ $ACTION = "stop" ]; then
     mkdir -p .backup
