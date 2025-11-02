@@ -1,8 +1,8 @@
 package ru.mipt.filler;
 
-import ru.mipt.model.User;
-import ru.mipt.service.CsvReaderService;
-import ru.mipt.service.DbInitService;
+import ru.mipt.filler.model.User;
+import ru.mipt.filler.service.CsvReaderService;
+import ru.mipt.filler.service.DbInitService;
 
 import java.sql.SQLException;
 import java.util.List;

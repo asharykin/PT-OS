@@ -1,6 +1,6 @@
 package ru.mipt.filler.service;
 
-import ru.mipt.model.User;
+import ru.mipt.filler.model.User;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
