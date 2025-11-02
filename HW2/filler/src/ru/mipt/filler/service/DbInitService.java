@@ -1,4 +1,4 @@
-package ru.mipt.service;
+package ru.mipt.filler.service;
 
 import ru.mipt.model.User;
 

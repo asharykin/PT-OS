@@ -1,4 +1,4 @@
-package ru.mipt;
+package ru.mipt.filler;
 
 import ru.mipt.model.User;
 import ru.mipt.service.CsvReaderService;

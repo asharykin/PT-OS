@@ -1,4 +1,4 @@
-package ru.mipt.model;
+package ru.mipt.filler.model;
 
 public class User {
 
