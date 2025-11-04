@@ -1,5 +1,6 @@
 package ru.mipt.filler.service;
 
+import ru.mipt.filler.mapper.UserMapper;
 import ru.mipt.filler.model.User;
 
 import java.io.BufferedReader;
@@ -8,30 +9,26 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CsvReaderService {
+public class CsvUserReaderService {
 
-    private final String separator = ",";
     private final String filePath = "data.csv";
+    private final UserMapper userMapper;
+
+    public CsvUserReaderService(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
 
     public List<User> readUsersFromCsvFile() {
         List<User> users = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            br.readLine(); // пропускаем первую строку с заголовком
+            br.readLine(); // пропустим первую строку с заголовком
             String line;
             while ((line = br.readLine()) != null) {
-                User user = parseLineIntoUser(line);
-                users.add(user);
+                users.add(userMapper.mapLineToUser(line));
             }
             return users;
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            throw new RuntimeException(ex); // выбросим исключение, будет ненулевой код возврата
         }
-    }
-
-    private User parseLineIntoUser(String line) {
-        String[] data = line.split(separator);
-        String name = data[0].trim();
-        int age = Integer.parseInt(data[1].trim());
-        return new User(name, age);
     }
 }

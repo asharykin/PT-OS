@@ -1,5 +1,7 @@
 package ru.mipt.filler.model;
 
+import java.util.Objects;
+
 public class User {
 
     private String name;
@@ -16,5 +18,21 @@ public class User {
 
     public int getAge() {
         return age;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+        return age == user.age && Objects.equals(name, user.name);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(name);
+        result = 31 * result + age;
+        return result;
     }
 }

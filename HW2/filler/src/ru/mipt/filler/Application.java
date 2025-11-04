@@ -1,8 +1,9 @@
 package ru.mipt.filler;
 
+import ru.mipt.filler.mapper.UserMapper;
 import ru.mipt.filler.model.User;
-import ru.mipt.filler.service.CsvReaderService;
-import ru.mipt.filler.service.DbInitService;
+import ru.mipt.filler.service.CsvUserReaderService;
+import ru.mipt.filler.repository.UserRepository;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -21,14 +22,20 @@ public class Application {
     }
 
     public static void main(String[] args) {
-        CsvReaderService csvReaderService = new CsvReaderService();
-        List<User> users = csvReaderService.readUsersFromCsvFile();
+        UserMapper userMapper = new UserMapper();
 
-        try (DbInitService dbInitService = new DbInitService(DB_URL, DB_USER, DB_PASSWORD)) {
-            dbInitService.createTableIfNotExists();
-            dbInitService.insertUsersIntoTable(users);
+        CsvUserReaderService csvUserReaderService = new CsvUserReaderService(userMapper);
+        List<User> usersFromCsv = csvUserReaderService.readUsersFromCsvFile();
+
+        List<User> usersFromDb;
+        try (UserRepository userRepository = new UserRepository(DB_URL, DB_USER, DB_PASSWORD, userMapper)) {
+            userRepository.createTableIfNotExists();
+            userRepository.insertUsersIntoTable(usersFromCsv);
+            usersFromDb = userRepository.selectAllUsersFromTable();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            throw new RuntimeException(ex); // выбросим исключение, будет ненулевой код возврата
         }
+
+        assert usersFromCsv.equals(usersFromDb); // с опцией -ea выбросит AssertionError, будет ненулевой код возврата
     }
 }
