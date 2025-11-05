@@ -36,6 +36,6 @@ public class Application {
             throw new RuntimeException(ex); // выбросим исключение, будет ненулевой код возврата
         }
 
-        assert usersFromCsv.equals(usersFromDb); // с опцией -ea выбросит AssertionError, будет ненулевой код возврата
+        assert Set.of(usersFromCsv).equals(Set.of(usersFromDb)); // с опцией -ea выбросит AssertionError, будет ненулевой код возврата
     }
 }
