@@ -2,17 +2,16 @@ services:
   db:
     image: mariadb:latest
     container_name: db
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: ServiceDB
+    env_file:
+      - .env
     ports:
       - "3306:3306"
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      start_period: 10s
+      start_period: 30s
       interval: 10s
-      timeout: 5s
-      retries: 3
+      timeout: 10s
+      retries: 10
     networks:
       - custom_network
 
@@ -24,12 +23,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    environment:
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_DATABASE: ServiceDB
-      DB_USER: root
-      DB_PASSWORD: root
+    env_file:
+      - .env
     volumes:
       - ./data.csv:/app/data.csv
     networks:
@@ -47,12 +42,8 @@ services:
         condition: service_healthy
       filler:
         condition: service_completed_successfully
-    environment:
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_DATABASE: ServiceDB
-      DB_USER: root
-      DB_PASSWORD: root
+    env_file:
+      - .env
     networks:
       - custom_network
 
