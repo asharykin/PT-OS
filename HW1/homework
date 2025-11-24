@@ -4,6 +4,8 @@ if ! command -v tmux &> /dev/null; then
     apt-get update -y &> /dev/null && apt-get install -y tmux &> /dev/null
 fi
 
+BASEDIR=$(dirname $0) && cd $BASEDIR
+
 tmux new-session -s homework -d &> /dev/null
 
 ACTION=$1 && shift
